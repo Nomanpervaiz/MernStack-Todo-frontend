@@ -6,21 +6,21 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { Edit, Trash } from "lucide-react";
 import { updateTaskData } from "../utils/TaskDataFunctions";
 import { UserContext } from "../context/userContext";
-
+import { AppRoutes } from "../constant/AppRoutes";
 dayjs.extend(relativeTime);
+
 function TaskAdd() {
-  console.log("App Render ==>", Math.random());
   const [updatedStatus, setUpdatedStatus] = useState("");
   const [data, setData] = useState([]);
   const [isTaskAdded, setIsTaskAdded] = useState(0);
   const [loader, setLoader] = useState(false);
-  const {logout} = useContext(UserContext)
+  const { logout,user } = useContext(UserContext);  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoader(true);
-        const response = await axios.get("http://localhost:4000/task");
+        const response = await axios.get(AppRoutes.task+"?userId="+user.id);
         setData(response?.data?.tasks || []);
         setLoader(false);
       } catch (error) {
@@ -49,7 +49,7 @@ function TaskAdd() {
 
   const deleteTask = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/task/${id}`);
+      await axios.delete(`${AppRoutes.task}/${id}`);
       setIsTaskAdded(isTaskAdded + 1);
     } catch (error) {
       console.error("Failed to delete task:", error);
@@ -64,20 +64,19 @@ function TaskAdd() {
   };
 
   return (
-
     <div className="h-fit min-h-dvh  bg-gray-800">
-      
       <div className="flex justify-between items-center  bg-green-600">
         <h1 className="w-full text-3xl font-bold p-4 mb-2  text-white">
-        Tasks
-      </h1>
-      <button
-      onClick={logout}
-       className="p-2 bg-black/[0.60] text-start m-2 justify-center items-center rounded-md text-green-600 shadow-md" >
-        logout
-      </button>
+          Tasks
+        </h1>
+        <button
+          onClick={logout}
+          className="p-2 bg-black/[0.60] text-start m-2 justify-center items-center rounded-md text-green-600 shadow-md"
+        >
+          logout
+        </button>
       </div>
-      
+
       <main className="container mx-auto p-4">
         <TaskAddForm loader={loader} onTaskAdded={callBackFunc} />
       </main>

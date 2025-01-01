@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { AppRoutes } from '../constant/AppRoutes';
+import axios from 'axios';
 
 export const UserContext = createContext();
 
@@ -19,14 +21,31 @@ export const UserProvider = ({ children }) => {
     Cookies.set('user', JSON.stringify(userData), { expires: 7 }); 
   };
 
-  // Function to log out the user and remove cookies
+
   const logout = () => {
     setUser(null);
     Cookies.remove('user');
   };
 
+  const getUserInfo = (token) => {
+    axios
+      .get(AppRoutes.login, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        console.log(res?.data?.data);
+        setUser(res?.data?.data);
+        // login(res?.data?.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  
+
   return (
-    <UserContext.Provider value={{ user, login, logout  }}>
+    <UserContext.Provider value={{ user, login, logout ,getUserInfo }}>
       {children}
     </UserContext.Provider>
   );

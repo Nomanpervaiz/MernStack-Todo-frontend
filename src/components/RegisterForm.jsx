@@ -1,10 +1,14 @@
 import axios from "axios";
+import { EyeIcon, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { AppRoutes } from "../constant/AppRoutes";
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  let [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
 
   const handleSubmit = async (e) => {
     try {
@@ -12,25 +16,28 @@ function RegisterForm() {
       console.log("fullname:", typeof fullName);
       console.log("Email:", typeof email);
       console.log("Password:", typeof password);
-      let response = await axios.post("http://localhost:4000/auth/register", {
+      let response = await axios.post(AppRoutes.register, {
         fullname: fullName,
         email,
         password,
       });
-      console.log("user" , response.data);
-
+      console.log("user", response.data);
     } catch (error) {
-        console.error(
-            "Error in login:",
-            error.response ? error?.response?.data : error?.message
-        );
+      console.error(
+        "Error in login:",
+        error.response ? error?.response?.data : error?.message
+      );
     }
+  };
+
+  const handlePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col sm:w-1/2 w-full gap-6"
+      className="relative flex flex-col sm:w-3/4 w-full gap-6"
     >
       <input
         type="text"
@@ -47,13 +54,23 @@ function RegisterForm() {
         required
       />
       <input
-        type="password"
+        type={isPasswordVisible ? "text" : "password"}
         placeholder="Enter Your Password"
         onChange={(e) => setPassword(e.target.value)}
         className="rounded-md p-2"
         required
       />
-
+      {isPasswordVisible ? (
+        <EyeIcon
+          onClick={handlePasswordVisibility}
+          className="cursor-pointer absolute right-2 top-32 m-2 "
+        />
+      ) : (
+        <EyeOff
+          onClick={handlePasswordVisibility}
+          className="cursor-pointer absolute right-2 top-32 m-2 "
+        />
+      )}
       <button
         type="submit"
         className="w-1/2 mx-auto p-2 rounded-md font-bold text-white bg-green-700"

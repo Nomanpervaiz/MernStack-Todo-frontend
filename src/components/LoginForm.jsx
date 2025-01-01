@@ -2,27 +2,27 @@ import axios from "axios";
 import { useState } from "react";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import { EyeIcon, EyeOff } from "lucide-react";
+import { AppRoutes } from "../constant/AppRoutes";
 
 function LoginForm() {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
-  const { login } = useContext(UserContext);
+  let [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState(null);
+  const { login ,getUserInfo } = useContext(UserContext);
 
   const reset = () => {
     setEmail("");
     setPassword("");
-
   };
 
-
-
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-
-
+      setError(null);
       const response = await axios.post(
-        "http://localhost:4000/auth/login",
+        AppRoutes.login,
         { email, password },
         {
           headers: {
@@ -31,28 +31,33 @@ const handleSubmit = async (e) => {
         }
       );
       const token = await response?.data?.data?.token;
-      const getUser = await axios.get("http://localhost:4000/auth/login", {
-        header: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log("get user from db ==> " , getUser);
-      login(getUser?.data);
-      
+      getUserInfo(token);
+      const user = await response?.data?.data?.user;
+      if (!token) {
+        throw new Error("Invalid token received. Please try again.");
+      }
+      console.log("get user from db ==> ", user);
+      login(user);
       reset();
-      console.log("email == ", email);
-      console.log("password == ", password);
     } catch (error) {
       console.error(
         "Error in login:",
         error.response ? error.response.data : error.message
       );
+
+      setError(error?.response?.data?.message);
     }
   };
 
+  const handlePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+  
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col w-full md:w-1/2 gap-6">
+    <form
+      onSubmit={handleSubmit}
+      className="flex relative flex-col w-full sm:w-3/4 gap-6"
+    >
       <input
         type="email"
         placeholder="Enter Your Email"
@@ -60,14 +65,25 @@ const handleSubmit = async (e) => {
         className="rounded-md p-2"
       />
       <input
-        type="password"
+        type={isPasswordVisible ? "text" : "password"}
         placeholder="Enter Your Password"
         onChange={(e) => setPassword(e.target.value)}
         className="rounded-md p-2"
+        id="password"
       />
+      {isPasswordVisible ? (
+        <EyeIcon
+          onClick={handlePasswordVisibility}
+          className="cursor-pointer absolute right-2 top-16 m-2 "
+        />
+      ) : (
+        <EyeOff
+          onClick={handlePasswordVisibility}
+          className="cursor-pointer absolute right-2 top-16 m-2 "
+        />
+      )}
       <button className="w-1/2 mx-auto p-2 rounded-md font-bold text-white bg-green-700 ">
-        {" "}
-        Login{" "}
+        Login
       </button>
     </form>
   );
