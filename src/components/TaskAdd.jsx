@@ -65,15 +65,16 @@ function TaskAdd() {
 
   return (
     <div className="h-fit min-h-screen bg-gray-800">
+      {/* Header */}
       <div className="flex justify-between p-2 items-center bg-green-600">
-        <div className="flex justify-between items-center container mx-auto px-4 py-3 ">
+        <div className="flex flex-wrap justify-between items-center container mx-auto px-4 py-3">
           <h1 className="text-start flex items-center text-lg sm:text-xl md:text-3xl font-bold text-gray-200">
             Mern-Todo
           </h1>
 
           <button
             onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-md transition-all duration-300"
+            className="flex items-center gap-2 px-2 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-md shadow-md transition-all duration-300"
           >
             Logout
             <LogOut className="ml-2" size={18} />
@@ -86,8 +87,8 @@ function TaskAdd() {
       </main>
 
       <div className="mt-2 mx-auto">
-        <div className="flex container mx-auto justify-center">
-          <ul className="w-full p-4 space-y-6">
+        <div className="flex flex-wrap container mx-auto justify-center">
+          <ul className="w-full p-4 space-y-4">
             {data?.length === 0 ? (
               <p className="text-center text-lg text-gray-400">
                 No tasks available
@@ -96,37 +97,39 @@ function TaskAdd() {
 
             {data?.map((task) => (
               <li
-                className="flex flex-wrap gap-4 items-center bg-gray-700 p-4 rounded-md shadow-md"
                 key={task._id}
+                className="bg-white/[0.10] p-4 rounded-md shadow-md space-y-4 md:space-y-0"
               >
-                <select
-                  className="bg-black/[0.60] hover:bg-black border-none p-2 w-auto flex rounded-md text-green-600 shadow-md outline-none"
-                  defaultValue={task?.status}
-                  onChange={(e) =>
-                    handleStatusChange(task?._id, e.target?.value)
-                  }
-                >
-                  <option value="done">Done</option>
-                  <option value="inprogress">In Progress</option>
-                  <option value="pending">Pending</option>
-                </select>
-
-                <input
-                  value={Capetilize(task?.task)}
-                  disabled
-                  className="p-2 flex-grow text-start rounded-md bg-black/[0.60] text-green-600 shadow-md"
-                />
-
-                <div className="flex w-1/2 sm:w-auto md:w-40 text-center justify-center items-center bg-black/[0.60] p-1 sm:p-2 rounded-md text-green-600 shadow-md">
+                <div className="flex w-full mb-4 justify-center items-center rounded-md text-gray-200 text-sm md:text-base">
                   {dayjs(task?.createdAt).fromNow()}
                 </div>
 
-                <button
-                  onClick={() => deleteTask(task._id)}
-                  className="p-2.5 bg-black/[0.60] flex justify-center flex-1 sm:flex-none  items-center rounded-md text-red-600 shadow-md hover:bg-black/[0.80]"
-                >
-                  <Trash size={18} />
-                </button>
+                <div className="flex flex-wrap justify-center md:justify-between items-center gap-4">
+                  <input
+                    value={Capetilize(task?.task)}
+                    disabled
+                    className="flex-grow w-full md:w-2/3 p-2 rounded-md bg-black/[0.90] text-white shadow-md"
+                  />
+
+                  <select
+                    className="w-full md:w-auto border-none p-2 rounded-md shadow-md outline-none"
+                    defaultValue={task?.status}
+                    onChange={(e) =>
+                      handleStatusChange(task?._id, e.target?.value)
+                    }
+                  >
+                    <option value="done">Done</option>
+                    <option value="inprogress">In Progress</option>
+                    <option value="pending">Pending</option>
+                  </select>
+
+                  <button
+                    onClick={() => deleteTask(task._id)}
+                    className="w-full md:w-auto p-2.5 bg-red-600 text-white rounded-md shadow-md hover:bg-red-800 transition-all flex justify-center"
+                  >
+                    <Trash size={18} />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
