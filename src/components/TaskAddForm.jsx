@@ -37,7 +37,7 @@ function TaskAddForm({ loader, onTaskAdded }) {
         <button
           type="submit"
           disabled={loader}
-          className="px-2 md:px-4 py-2 bg-green-600 text-white font-semibold rounded"
+          className="px-2 md:px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded"
         >
           {loader ? "Adding..." : "Add Task"}
         </button>
