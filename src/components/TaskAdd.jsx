@@ -69,7 +69,7 @@ function TaskAdd() {
     <div className="h-fit min-h-screen bg-gray-800">
       <div className="flex justify-between p-2 items-center bg-gray-400">
         <div className="flex justify-between items-center container mx-auto px-4 py-3 ">
-          <h1 className="text-start flex items-center text-lg sm:text-xl  md:text-3xl font-bold text-cyan-700">
+          <h1 className="text-start flex items-center text-lg sm:text-xl  md:text-3xl font-bold text-cyan-600">
             Mern-Todo
           </h1>
 

@@ -3,26 +3,33 @@ import { EyeIcon, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { AppRoutes } from "../constant/AppRoutes";
 
-function RegisterForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+function RegisterForm({ showMessage }) {
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [fullName, setFullName] = useState("");
   let [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       console.log("fullname:", typeof fullName);
-      console.log("Email:", typeof email);
-      console.log("Password:", typeof password);
+    
       let response = await axios.post(AppRoutes.register, {
         fullname: fullName,
         email,
         password,
       });
-      console.log("user", response.data);
+
+      let userRegister = response.data;
+      if (userRegister) {
+        console.log("User Registered Successfully", userRegister);
+        showMessage(userRegister?.message);
+        fullName = "";
+        email = "";
+        password = "";
+      }
     } catch (error) {
+      showMessage(error?.response?.data?.message);
       console.error(
         "Error in login:",
         error.response ? error?.response?.data : error?.message
@@ -60,6 +67,7 @@ function RegisterForm() {
         className="rounded-md p-2"
         required
       />
+
       {isPasswordVisible ? (
         <EyeIcon
           onClick={handlePasswordVisibility}
