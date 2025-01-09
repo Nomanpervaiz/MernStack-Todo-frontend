@@ -4,13 +4,15 @@ import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 import { EyeIcon, EyeOff } from "lucide-react";
 import { AppRoutes } from "../constant/AppRoutes";
+import { message } from "antd";
 
 function LoginForm() {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
   let [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [error, setError] = useState(null);
+  let [loading, setLoading] = useState(false);
   const { login ,getUserInfo } = useContext(UserContext);
+
 
   const reset = () => {
     setEmail("");
@@ -19,8 +21,8 @@ function LoginForm() {
 
   const handleSubmit = async (e) => {
     try {
+      setLoading(true);
       e.preventDefault();
-      setError(null);
       const response = await axios.post(
         AppRoutes.login,
         { email, password },
@@ -28,6 +30,7 @@ function LoginForm() {
           headers: {
             "Content-Type": "application/json",
           },
+
         }
       );
       const token = await response?.data?.data?.token;
@@ -37,16 +40,28 @@ function LoginForm() {
         throw new Error("Invalid token received. Please try again.");
       }
       console.log("get user from db ==> ", user);
+      if (user) {
+        user._id = user.id 
+        message.success("Login Successfully");
+      }
       login(user);
       reset();
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(
         "Error in login:",
         error.response ? error.response.data : error.message
       );
+      if (error?.response?.data?.data === null) {
+        message.error("user not found");
+      }else{
+        message.error("Invalid email or password");
 
-      setError(error?.response?.data?.message);
+      }
     }
+    
+    setLoading(false);
   };
 
   const handlePasswordVisibility = () => {
@@ -62,14 +77,16 @@ function LoginForm() {
         type="email"
         placeholder="Enter Your Email"
         onChange={(e) => setEmail(e.target.value)}
-        className="rounded-md p-2"
+        className="rounded-md p-2 outline-none"
+        required
       />
       <input
         type={isPasswordVisible ? "text" : "password"}
         placeholder="Enter Your Password"
         onChange={(e) => setPassword(e.target.value)}
-        className="rounded-md p-2"
+        className="rounded-md p-2 outline-none"
         id="password"
+        required
       />
       {isPasswordVisible ? (
         <EyeIcon
@@ -82,8 +99,12 @@ function LoginForm() {
           className="cursor-pointer absolute right-2 top-16 m-2 "
         />
       )}
-      <button className="w-1/2 mx-auto p-2 rounded-md font-bold text-white bg-green-700 ">
-        Login
+      <button
+      disabled={loading}
+       className="w-1/2 mx-auto p-2 rounded-md font-bold text-white bg-cyan-600 hover:bg-cyan-700 ">
+        {
+          loading ? "Loading..." : "Login"
+        }
       </button>
     </form>
   );

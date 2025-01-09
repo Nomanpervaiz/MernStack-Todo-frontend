@@ -14,13 +14,12 @@ function TaskAddForm({ loader, onTaskAdded }) {
       const response = await axios.post(AppRoutes.task, {
         task: data?.task,
         status: data?.status,
-        taskAddedBy: user?.id,
-      });
-      console.log("response in taskadd ==>", response.data);
-      reset();
+        taskAddedBy: user?._id,
+      }); 
       onTaskAdded();
+      reset();
     } catch (error) {
-      console.log("error in onsubmit ", error.message);
+      console.log("error in onsubmit ", error?.message);
     }
   };
 
@@ -32,14 +31,12 @@ function TaskAddForm({ loader, onTaskAdded }) {
           type="text"
           placeholder="Add a new task"
           aria-label="New task"
-          className="flex-grow outline-none border-none px-2 py-2 rounded"
-        />
+          className="flex-grow outline-none border-none  px-2 py-2 rounded"/>
         <button
           type="submit"
           disabled={loader}
-          className="px-2 md:px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-semibold rounded"
-        >
-          {loader ? "Adding..." : "Add Task"}
+          className="px-2 md:px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded">
+          Add Task
         </button>
       </div>
       <div>

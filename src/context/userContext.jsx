@@ -11,10 +11,14 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const savedUser = Cookies.get('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error("Error parsing user cookie:", error);
+        Cookies.remove('user'); 
+      }}
   }, []);
-
+  
 
   const login = (userData) => {
     setUser(userData);
@@ -35,9 +39,8 @@ export const UserProvider = ({ children }) => {
         },
       })
       .then((res) => {
-        console.log(res?.data?.data);
         setUser(res?.data?.data);
-        // login(res?.data?.data);
+        login(res?.data?.data);
       })
       .catch((err) => console.log(err));
   };
